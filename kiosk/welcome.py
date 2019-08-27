@@ -1,5 +1,4 @@
-from tkinter import *
-from orderPage import *
+from kiosk.orderPage import *
 from tkinter import messagebox
 from time import sleep
 
