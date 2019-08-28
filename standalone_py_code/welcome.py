@@ -1,4 +1,4 @@
-from kiosk.orderPage import *
+from standalone_py_code.orderPage import *
 from tkinter import messagebox
 from time import sleep
 
