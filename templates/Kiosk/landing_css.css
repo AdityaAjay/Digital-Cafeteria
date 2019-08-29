@@ -104,7 +104,10 @@
 html {
     width: 100%;
     height: 100%;
-    overflow: hidden;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+
 }
 
 body {
@@ -112,6 +115,7 @@ body {
     height: 100%;
     font-family: 'Open Sans', sans-serif;
     background: #092756;
+    /*background: #e7eff6;*/
     background: -moz-radial-gradient(0% 100%, ellipse cover, rgba(104, 128, 138, .4) 10%, rgba(138, 114, 76, 0) 40%), -moz-linear-gradient(top, rgba(57, 173, 219, .25) 0%, rgba(42, 60, 87, .4) 100%), -moz-linear-gradient(-45deg, #670d10 0%, #092756 100%);
     background: -webkit-radial-gradient(0% 100%, ellipse cover, rgba(104, 128, 138, .4) 10%, rgba(138, 114, 76, 0) 40%), -webkit-linear-gradient(top, rgba(57, 173, 219, .25) 0%, rgba(42, 60, 87, .4) 100%), -webkit-linear-gradient(-45deg, #670d10 0%, #092756 100%);
     background: -o-radial-gradient(0% 100%, ellipse cover, rgba(104, 128, 138, .4) 10%, rgba(138, 114, 76, 0) 40%), -o-linear-gradient(top, rgba(57, 173, 219, .25) 0%, rgba(42, 60, 87, .4) 100%), -o-linear-gradient(-45deg, #670d10 0%, #092756 100%);
@@ -120,8 +124,16 @@ body {
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#3E1D6D', endColorstr='#092756', GradientType=1);
 }
 
+.logo {
+    display: block;
+    margin-left: 560px;
+    margin-right: auto;
+    width: 50%;
+    filter: invert(30%);
+}
+
 .login {
-    position: absolute;
+    position: fixed;
     top: 50%;
     left: 50%;
     margin: -150px 0 0 -150px;
@@ -137,6 +149,7 @@ body {
 }
 
 .login h3 {
+    position: static;
     color: #fff;
     text-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
     letter-spacing: 1px;

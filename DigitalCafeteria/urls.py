@@ -15,10 +15,11 @@ Including another URLconf
 """
 from django.conf.urls import url, include
 from django.contrib import admin
-# from Kiosk import views
+from Kiosk import views as kiosk_views
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^$', include('Kiosk.urls')),
-
+    url(r'^selectitems/', kiosk_views.select_items),
+    url(r'^$', kiosk_views.landing_page),
+    url(r'^itemadded/', kiosk_views.item_added)
 ]
