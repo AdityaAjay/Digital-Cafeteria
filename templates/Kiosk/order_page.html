@@ -22,6 +22,17 @@
 <div class="logo">
     <img src="{% static '/Kiosk/logo.png' %}">
 </div>
+<!--html>
+<div class=" cart">
+    <img src="{% static 'Kiosk/cart.png' %}">
+</div>
+-->
+{% if received_item %}
+    <br>
+    <div class="alert alert-dark" role="alert">
+        {{ received_item.name }} Added To Cart
+    </div>
+{% endif %}
 <!--
 <div class=" login">
     <h3>Select Food Items: </h3>

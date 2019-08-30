@@ -22,11 +22,12 @@
 <div class="logo">
     <img src="{% static '/Kiosk/logo.png' %}">
 </div>
+<img src="{% static 'Kiosk/cart.png' %}" style="alignment:center;filter:invert(100%);" alt="Cart" height="50" width="50">
 <br>
 {% block added_item %}
-<div class="alert alert-dark" role="alert">
-    {{ received_item.name }} Added To Cart
-</div>
+    <div class="alert alert-dark" role="alert">
+        {{ received_item.name }} Added To Cart
+    </div>
 {% endblock %}
 <!--
 <div class=" login">
@@ -39,7 +40,7 @@
     <div class="row">
         {% for item in items %}
             <!--<form action="/itemadded/" method="post" id="{{ item.id }}"> -->
-            <form action="/itemadded/" method="post" >
+            <form action="/itemadded/" method="post">
                 <div class="col">
                     <div class="card text-white bg-dark mb-3" style="max-width: 18rem;">
                         <img class="card-img-top" src="{{ item.image_url }}" height="200" width="200">
