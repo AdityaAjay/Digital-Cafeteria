@@ -15,5 +15,6 @@ class Food(models.Model):
 
 class CurrentOrder(models.Model):
     food_item_id = models.IntegerField(default=0)
+    name = models.CharField(max_length=100, default="test")
     quantity = models.IntegerField(default=1)
     price = models.FloatField(default=0)

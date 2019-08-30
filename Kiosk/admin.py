@@ -8,7 +8,7 @@ class FoodAdmin(admin.ModelAdmin):
 
 
 class CurrentOrderAdmin(admin.ModelAdmin):
-    list_display = ('food_item_id', 'quantity', 'price')
+    list_display = ('food_item_id', 'name', 'quantity', 'price')
 
 
 admin.site.register(Food, FoodAdmin)

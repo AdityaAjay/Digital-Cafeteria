@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Order</title>
+    <title>Cart</title>
     <link rel="stylesheet" href="{% static '/Kiosk/landing_css.css' %}">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
           integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
@@ -22,47 +22,35 @@
 <div class="logo">
     <img src="{% static '/Kiosk/logo.png' %}">
 </div>
-<!--html>
-<div class=" cart">
-    <img src="{% static 'Kiosk/cart.png' %}">
-</div>
--->
-{% if received_item %}
-    <br>
-    <div class="alert alert-dark" role="alert">
-        {{ received_item.name }} Added To Cart
-    </div>
-{% endif %}
-<!--
 <div class=" login">
-    <h3>Select Food Items: </h3>
+    <h1>Your Cart</h1>
 </div>
--->
-<a href="/cart/"><img style="alignment: right" height="42" width="50" src="{% static 'Kiosk/cart.png' %}" ></a>
-<h4 style="color: #e6e6e6">Your Cart</h4>
 {% block content %}
-
+    <br>
+    <br>
+    <br>
     <div class="row">
-        {% for item in items %}
+        {% for item in cart_items %}
             <!--<form action="/itemadded/" method="post" id="{{ item.id }}"> -->
-            <form action="/itemadded/" method="post">
-                <div class="col">
-                    <div class="card text-white bg-dark mb-3" style="max-width: 18rem;">
-                        <img class="card-img-top" src="{{ item.image_url }}" height="200" width="200">
-                        <div class="card-header">{{ item.name }}</div>
-                        <div class="card-body">
-                            <h5 class="card-title">₹{{ item.price }}</h5>
-                            <p class="card-text">Available: {{ item.availability }}</p>
-                            <input type="hidden" name="id" value="{{ item.id }}">
-                            <button class="btn btn-primary">Add to Cart</button>
-                        </div>
+            <div class="col">
+                <div class="card text-white bg-dark mb-3" style="max-width: 18rem;">
+                    <div class="card-header">{{ item.name }}</div>
+                    <div class="card-body">
+                        <h5 class="card-title">Quantity- {{ item.quantity }}</h5>
+                        <p class="card-text">₹{{ item.price }}</p>
                     </div>
                 </div>
+            </div>
             </form>
             <!-- </form> -->
         {% endfor %}
     </div>
-{% endblock %}
+    <br></br>
 
+    <h2 style="color: #e6e6e6">Total ₹{{ total }}</h2>
+{% endblock %}
+<form method="post" action="/#/">
+    <button type="submit" class="btn btn-primary btn-block btn-large">Complete Payment</button>
+</form>
 </body>
 </html>
