@@ -20,9 +20,11 @@ def clear_cart():
 def dynamoOrder(request):
     dynamodb = boto3.resource('dynamodb', region_name='ap-south-1')
     table = dynamodb.Table('Order')
+    table.put_item(Item={"Enrolment": 12, "Total": 100})
 
 
 def send_paytm(request):
+    # return HttpResponse("""<script>alert("Sent to Paytm")</script>""")
     pass
 
 
@@ -69,3 +71,20 @@ def go_to_cart(request):
     total = total[0]
     db.close()
     return render(request, 'Kiosk/cart.html', {'cart_items': cart_items, 'total': total})
+
+
+def add_to_aws(request):
+    total = request.POST.get('total')
+    db = sqlite3.connect('/home/aditya/PycharmProjects/DigitalCafeteria/db.sqlite3')
+    cursor = db.cursor()
+    cursor.execute('''SELECT order_id from Kiosk_ordernumber where id=?''', (1,))
+    current_order = cursor.fetchone()
+    current_order = current_order[0]
+    current_order += 1
+    cursor.execute('''UPDATE Kiosk_ordernumber SET order_id=? WHERE id=?''', (current_order, 1))
+    db.commit()
+    dynamodb = boto3.resource('dynamodb', region_name='ap-south-1')
+    table = dynamodb.Table('Order')
+    table.put_item(Item={"ID": current_order, "Enrolment": "Guest", "Total": total})
+
+    # return (added to aws successfully)
