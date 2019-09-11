@@ -13,9 +13,14 @@ Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
-from django.conf.urls import url
+from django.conf.urls import url, include
 from django.contrib import admin
+from Kiosk import views as kiosk_views
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
+    url(r'^selectitems/', kiosk_views.select_items),
+    url(r'^$', kiosk_views.landing_page),
+    url(r'^itemadded/', kiosk_views.item_added),
+    url(r'^cart/',kiosk_views.go_to_cart)
 ]
