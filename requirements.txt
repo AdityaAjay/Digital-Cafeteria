@@ -1,5 +1,6 @@
 spidev
 mfrc522
-tkinter
 boto3
 django
+redis
+celery
