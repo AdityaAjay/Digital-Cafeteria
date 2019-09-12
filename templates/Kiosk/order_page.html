@@ -27,6 +27,12 @@
     <img src="{% static 'Kiosk/cart.png' %}">
 </div>
 -->
+{% if balance %}
+    <br>
+    <div class="alert alert-dark" role="alert">
+        Available Balance: ₹{{ balance }}
+    </div>
+{% endif %}
 {% if received_item %}
     <br>
     <div class="alert alert-dark" role="alert">

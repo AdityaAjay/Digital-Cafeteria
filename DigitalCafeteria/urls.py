@@ -23,7 +23,8 @@ urlpatterns = [
     url(r'^$', kiosk_views.landing_page),
     url(r'^itemadded/', kiosk_views.item_added),
     url(r'^cart/', kiosk_views.go_to_cart),
-    url(r'^paytm/', kiosk_views.send_paytm)
+    url(r'^completepayment/', kiosk_views.add_to_aws),
+    url(r'^analyzeID/', kiosk_views.check_rfid)
 ]
 
-#testing Alpha branch
+# testing Alpha branch

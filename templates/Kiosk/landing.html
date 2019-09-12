@@ -1,5 +1,6 @@
 {% load static %}
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Catering Care</title>
@@ -17,6 +18,12 @@
             crossorigin="anonymous"></script>
 
 </head>
+{% if msg %}
+    <script>
+    alert("Order placed successfully");
+    </script>
+
+{% endif %}
 <body>
 <br>
 <div class="logo">
@@ -24,14 +31,15 @@
 </div>
 <div class=" login">
     <br>
-<br>
-
-    <h3>Tap College ID or click below to pay via Paytm or Card</h3>
     <br>
 
-    <form method="post" action="/selectitems/">
-        <button type="submit" class="btn btn-primary btn-block btn-large">Paytm/Card</button>
+    <!--<h3>Please tap your College ID</h3> -->
+    <br>
+
+    <form method="post" action="/analyzeID/">
+        <button type="submit" class="btn btn-primary btn-block btn-large">Click here then tap your ID</button>
     </form>
+
 </div>
 
 </body>

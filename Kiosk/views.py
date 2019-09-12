@@ -1,11 +1,25 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from decimal import Decimal
 import boto3
 from .models import Food, CurrentOrder
 import sqlite3
+from boto3.dynamodb.conditions import Key
 
 items = Food.objects.all()
 item_counter = {}
+current_user = '5871857'
+dynamodb = boto3.resource('dynamodb', region_name='ap-south-1')
+balance_table = dynamodb.Table('Balance')
+table = dynamodb.Table('Order')
+resp = balance_table.query(KeyConditionExpression=Key('ID').eq('5871857'))
+current_balance = (resp.get('Items'))[0].get('Balance')
+
+
+def clear_aws():
+    global current_balance
+    global current_user
+    current_user = ''
+    current_balance = 0
 
 
 def clear_cart():
@@ -15,12 +29,11 @@ def clear_cart():
     db.commit()
     db.close()
     item_counter.clear()
+    current_user_id = ''
 
 
-def dynamoOrder(request):
-    dynamodb = boto3.resource('dynamodb', region_name='ap-south-1')
-    table = dynamodb.Table('Order')
-    table.put_item(Item={"Enrolment": 12, "Total": 100})
+def dynamo():
+    pass
 
 
 def send_paytm(request):
@@ -30,6 +43,7 @@ def send_paytm(request):
 
 def landing_page(request):
     clear_cart()
+    clear_aws()
     return render(request, 'Kiosk/landing.html')
 
 
@@ -39,6 +53,11 @@ def select_items(request):
 
 
 def item_added(request):
+    global current_balance
+    global current_user
+    global dynamodb
+    global table
+    global balance_table
     db = sqlite3.connect('/home/aditya/PycharmProjects/DigitalCafeteria/db.sqlite3')
     cursor = db.cursor()
     received_id = request.POST.get('id')
@@ -59,7 +78,12 @@ def item_added(request):
                    (received_id, received_name[0], count, price[0] * count))
     db.commit()
     db.close()
-    return render(request, 'Kiosk/order_page.html', {'items': items, 'received_item': received_item})
+    # dynamodb = boto3.resource('dynamodb', region_name='ap-south-1')
+    # table = dynamodb.Table('Balance')
+    # resp = table.query(KeyConditionExpression=Key('ID').eq('5871857'))
+    # current_balance = (resp.get('Items'))[0].get('Balance')
+    return render(request, 'Kiosk/order_page.html',
+                  {'items': items, 'received_item': received_item, 'balance': current_balance})
 
 
 def go_to_cart(request):
@@ -74,17 +98,59 @@ def go_to_cart(request):
 
 
 def add_to_aws(request):
-    total = request.POST.get('total')
+    global current_balance
+    global current_user
+    global dynamodb
+    global table
+    global balance_table
+    # total = request.POST.get('total')
     db = sqlite3.connect('/home/aditya/PycharmProjects/DigitalCafeteria/db.sqlite3')
     cursor = db.cursor()
+    cursor.execute('''SELECT sum(price) FROM Kiosk_currentorder''')
+    total = cursor.fetchone()
+    total = total[0]
     cursor.execute('''SELECT order_id from Kiosk_ordernumber where id=?''', (1,))
     current_order = cursor.fetchone()
     current_order = current_order[0]
     current_order += 1
     cursor.execute('''UPDATE Kiosk_ordernumber SET order_id=? WHERE id=?''', (current_order, 1))
     db.commit()
-    dynamodb = boto3.resource('dynamodb', region_name='ap-south-1')
-    table = dynamodb.Table('Order')
-    table.put_item(Item={"ID": current_order, "Enrolment": "Guest", "Total": total})
+    # dynamodb = boto3.resource('dynamodb', region_name='ap-south-1')
+    # table = dynamodb.Table('Order')
+    total = Decimal(total)
+    table.put_item(Item={"ID": current_order, "Enrolment": current_user, "Total": total})
 
-    # return (added to aws successfully)
+    # # current_user = 5871857
+    # balance_table = dynamodb.Table('Balance')
+    # resp = balance_table.query(KeyConditionExpression=Key('ID').eq(current_user))
+    # current_balance = (resp.get('Items'))[0].get('Balance')
+    current_balance = str(current_balance)
+    # return (added to aws success
+    # fully)
+    total = str(total)
+    total = int(total)
+    current_balance = int(current_balance)
+    current_balance -= total
+    balance_table.put_item(Item={"ID": '5871857', 'Balance': str(current_balance)})
+    msg = "Order placed successfully"
+    return render(request, 'Kiosk/landing.html', {'msg': msg})
+
+
+def check_rfid(request):
+    clear_aws()
+    global current_balance
+    global current_user
+    global dynamodb
+    global table
+    global balance_table
+    flag = False
+    # dynamodb = boto3.resource('dynamodb', region_name='ap-south-1')
+    # table = dynamodb.Table('Balance')
+    # ---------------------ADD RFID functionality here-----------------------
+    current_user = '5871857'
+    # -----------------------------------------------------------------------
+    resp = balance_table.query(KeyConditionExpression=Key('ID').eq('5871857'))
+    current_balance = (resp.get('Items'))[0].get('Balance')
+    flag = True
+    if flag:
+        return render(request, 'Kiosk/order_page.html', {'items': items, 'balance': current_balance})
