@@ -4,6 +4,8 @@ import boto3
 from .models import Food, CurrentOrder
 import sqlite3
 from boto3.dynamodb.conditions import Key
+from fpdf import FPDF
+from datetime import datetime
 
 items = Food.objects.all()
 item_counter = {}
@@ -23,22 +25,99 @@ def clear_aws():
 
 
 def clear_cart():
+    global item_counter
     db = sqlite3.connect('/home/aditya/PycharmProjects/DigitalCafeteria/db.sqlite3')
     cursor = db.cursor()
     cursor.execute('DELETE from Kiosk_currentorder')
     db.commit()
     db.close()
     item_counter.clear()
-    current_user_id = ''
 
 
-def dynamo():
-    pass
+# -----------------
+class PDF(FPDF):
+    def header(self):
+        # Logo
+        self.image('/home/aditya/PycharmProjects/DigitalCafeteria/templates/Kiosk/logo.png', 10, 8, 33)
+        self.ln(30)
+
+    # Page footer
+    def footer(self):
+        # Position at 1.5 cm from bottom
+        self.set_y(-15)
+        # Arial italic 8
+        self.set_font('Arial', 'I', 8)
+        # Page number
+        self.cell(0, 10, 'Page ' + str(self.page_no()) + '/{nb}', 0, 0, 'C')
 
 
-def send_paytm(request):
-    # return HttpResponse("""<script>alert("Sent to Paytm")</script>""")
-    pass
+def get_time():
+    hour = datetime.now().hour
+    minute = datetime.now().minute
+    second = datetime.now().second
+    day = datetime.now().day
+    month = datetime.now().month
+    year = datetime.now().year
+    return f"""{hour}:{minute}:{second}  {day}/{month}/{year}"""
+
+
+def generator(items_local, price, quantity):
+    pdf = PDF('P', 'mm', (76.2, 150))
+    # modify according to page width. change size of logo image and reformat date time
+    total = 0
+    for individual_price in price:
+        total += individual_price
+    grand_total = f"Grand Total: Rs. {total}"
+    # pdf = PDF()
+    time = get_time()
+    pdf.alias_nb_pages()
+    pdf.add_page()
+    pdf.set_text_color(0, 0, 102)
+    pdf.set_font('Courier', 'BI', 12)
+    pdf.cell(50, 8, time, 0, 1, 'C')
+    pdf.set_font('Helvetica', 'I', 12)
+    # init = 50
+    pdf.ln(10)
+    pdf.cell(65, 15, "Item          Quantity        Total", 1, 1, 'L')
+    for i in range(len(items_local)):
+        toWrite = f'''{items_local[i]} {quantity[i]} units Rs {price[i]}\n'''
+        # pdf.write(init, toWrite)
+        # init += 1
+        pdf.cell(65, 15, toWrite, 1, 1, 'L')
+    pdf.set_font('Courier', 'BU', 12)
+    pdf.cell(65, 15, grand_total, 1, 1, 'L')
+    #    pdf.write(init + 10, grand_total)
+    pdf.output('bill.pdf', 'F')
+    return True
+
+
+# ----------------
+
+def bill_generate():
+    db = sqlite3.connect('/home/aditya/PycharmProjects/DigitalCafeteria/db.sqlite3')
+    cursor = db.cursor()
+    cursor.execute('''SELECT * from Kiosk_currentorder''')
+    all_fetched_items = cursor.fetchall()
+    # print(all_fetched_items)
+    name_list = []
+    price_list = []
+    quantity_list = []
+    for item in all_fetched_items:
+        name_list.append(item[4])
+        price_list.append(item[3])
+        quantity_list.append(item[2])
+    # print(name_list)
+    # print(price_list)
+    db.close()
+    if generator(name_list, price_list, quantity_list):
+        return True
+
+
+def bill_print():
+    # ---------------------
+    #          add print functionality
+    # ---------------------
+    return True
 
 
 def landing_page(request):
@@ -133,11 +212,19 @@ def add_to_aws(request):
     current_balance -= total
     balance_table.put_item(Item={"ID": '5871857', 'Balance': str(current_balance)})
     msg = "Order placed successfully"
-    return render(request, 'Kiosk/landing.html', {'msg': msg})
+    # to generate bill
+    if bill_generate():
+        clear_cart()
+        # --------- Printer functionality ----------
+
+        # -------------------------------------------
+        if bill_print():
+            return render(request, 'Kiosk/landing.html', {'msg': msg})
 
 
 def check_rfid(request):
     clear_aws()
+    clear_cart()
     global current_balance
     global current_user
     global dynamodb

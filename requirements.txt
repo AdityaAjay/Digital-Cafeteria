@@ -4,3 +4,4 @@ boto3
 django
 redis
 celery
+fpdf
