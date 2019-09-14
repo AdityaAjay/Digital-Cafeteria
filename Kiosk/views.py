@@ -1,3 +1,12 @@
+# The imports used in this module are mentioned below:
+# [1] render is imported to render .html files from the templates folder and pass on some extra information like item list, etc.
+# [2] decimal is being used to type cast the sum and upload to AWS
+# [3] boto3 is the python3 package for AWS
+# [4] Food and CurrentOrder are the database tables that are being used to maintain the order number and food items
+# [5] sqlite3 is the python3 package for SQLite
+# [6] fpdf is a python package to generate .pdf files
+# [7] datetime is used to get the current date and time to print on the bill
+
 from django.shortcuts import render
 from decimal import Decimal
 import boto3
@@ -72,7 +81,7 @@ def generator(items_local, price, quantity):
     time = get_time()
     pdf.alias_nb_pages()
     pdf.add_page()
-    pdf.set_text_color(0, 0, 102)
+    pdf.set_text_color(0, 0, 0)
     pdf.set_font('Courier', 'BI', 12)
     pdf.cell(50, 8, time, 0, 1, 'C')
     pdf.set_font('Helvetica', 'I', 12)
@@ -80,7 +89,7 @@ def generator(items_local, price, quantity):
     pdf.ln(10)
     pdf.cell(65, 15, "Item          Quantity        Total", 1, 1, 'L')
     for i in range(len(items_local)):
-        toWrite = f'''{items_local[i]} {quantity[i]} units Rs {price[i]}\n'''
+        toWrite = f'''{items_local[i]} {quantity[i]} unit(s) Rs {price[i]}\n'''
         # pdf.write(init, toWrite)
         # init += 1
         pdf.cell(65, 15, toWrite, 1, 1, 'L')
@@ -241,3 +250,17 @@ def check_rfid(request):
     flag = True
     if flag:
         return render(request, 'Kiosk/order_page.html', {'items': items, 'balance': current_balance})
+
+
+def logout(request):
+    clear_cart()
+    global balance_table
+    clear_aws()
+    global current_user
+    global current_balance
+    # to remove when RFID setup is complete
+    current_user = '5871857'
+    resp = balance_table.query(KeyConditionExpression=Key('ID').eq('5871857'))
+    current_balance = (resp.get('Items'))[0].get('Balance')
+    # to set to NULL after RFID setup is complete
+    return render(request, 'Kiosk/landing.html')
