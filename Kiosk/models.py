@@ -18,3 +18,7 @@ class CurrentOrder(models.Model):
     name = models.CharField(max_length=100, default="test")
     quantity = models.IntegerField(default=1)
     price = models.FloatField(default=0)
+
+
+class OrderNumber(models.Model):
+    order_id = models.IntegerField(default=1)

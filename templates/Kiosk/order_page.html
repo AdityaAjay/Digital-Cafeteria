@@ -27,24 +27,37 @@
     <img src="{% static 'Kiosk/cart.png' %}">
 </div>
 -->
+{% if balance %}
+    <br>
+    <form action="/logout/" method="post">
+        <div class="card-body">
+            <button class="btn btn-primary">Logout</button>
+        </div>
+    </form>
+    <div class="alert alert-dark" role="alert">
+        Available Balance: ₹{{ balance }}
+    </div>
+{% endif %}
 {% if received_item %}
     <br>
     <div class="alert alert-dark" role="alert">
         {{ received_item.name }} Added To Cart
     </div>
+    <a href="/cart/"><img style="alignment: right" height="42" width="50" src="{% static 'Kiosk/cart.png' %}"></a>
+    <h4 style="color: #e6e6e6">Your Cart</h4>
 {% endif %}
 <!--
 <div class=" login">
     <h3>Select Food Items: </h3>
 </div>
 -->
-<a href="/cart/"><img style="alignment: right" height="42" width="50" src="{% static 'Kiosk/cart.png' %}" ></a>
-<h4 style="color: #e6e6e6">Your Cart</h4>
+
 {% block content %}
 
     <div class="row">
         {% for item in items %}
             <!--<form action="/itemadded/" method="post" id="{{ item.id }}"> -->
+
             <form action="/itemadded/" method="post">
                 <div class="col">
                     <div class="card text-white bg-dark mb-3" style="max-width: 18rem;">
@@ -52,9 +65,15 @@
                         <div class="card-header">{{ item.name }}</div>
                         <div class="card-body">
                             <h5 class="card-title">₹{{ item.price }}</h5>
-                            <p class="card-text">Available: {{ item.availability }}</p>
+                            {% if item.availability %}
+                                <p class="card-text">Available: Yes</p>
+                            {% else %}
+                                <p class="card-text">Available: No</p>
+                            {% endif %}
                             <input type="hidden" name="id" value="{{ item.id }}">
-                            <button class="btn btn-primary">Add to Cart</button>
+                            {% if item.availability %}
+                                <button class="btn btn-primary">Add to Cart</button>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
