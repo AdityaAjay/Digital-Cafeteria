@@ -19,12 +19,14 @@ Installation procedure -
   
   
 To Do:
-- Configure RFID and input any unique ID
 
-- Edit sqlite db file in Kiosk/views.py before deploying to Pi
+  - Configure RFID and input any unique ID
+
+  - Edit sqlite db file in Kiosk/views.py before deploying to Pi
 
 
 Steps to perform at set intervals:
+
   [1] Delete all items from DynamoDB Orders Table
   
   [2] Set current order to 0 in SQLite Orders table
